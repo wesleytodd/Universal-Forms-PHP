@@ -1,8 +1,8 @@
 <?php
 
-namespace wesleytodd\UniversalForms\Laravel;
+namespace Wesleytodd\UniversalForms\Drivers\Laravel;
 
-use wesleytodd\UniversalForms\Core\Form as CoreForm;
+use Wesleytodd\UniversalForms\Core\Form as CoreForm;
 
 class Form extends CoreForm {
 

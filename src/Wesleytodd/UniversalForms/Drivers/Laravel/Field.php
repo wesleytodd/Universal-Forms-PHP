@@ -1,8 +1,8 @@
 <?php
 
-namespace wesleytodd\UniversalForms\Laravel;
+namespace Wesleytodd\UniversalForms\Laravel;
 
-use wesleytodd\UniversalForms\Core\Field as CoreField;
+use Wesleytodd\UniversalForms\Core\Field as CoreField;
 
 class Field extends CoreField {
 

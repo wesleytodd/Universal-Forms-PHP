@@ -1,6 +1,6 @@
 <?php
 
-namespace wesleytodd\UniversalForms\Core;
+namespace Wesleytodd\UniversalForms\Core;
 
 use IteratorAggregate;
 use ArrayIterator;
@@ -31,11 +31,15 @@ class Form implements IteratorAggregate, JsonSerializable, Serializable {
 	 * @param string|array $form an array or json string UniversalForm declaration
 	 * @param array $opts an array of other options
 	 */
-	public function __construct($form) {
-		if (!is_string($form)) {
+	public function __construct($form = null) {
+		if ($form == null) {
+			$form = json_encode(new stdClass());
+		} else if (!is_string($form)) {
 			$form = json_encode($form);
 		}
-		$this->unserialize($form);
+		if ($form !== '{}') {
+			$this->unserialize($form);
+		}
 	}
 
 	/**
@@ -92,9 +96,9 @@ class Form implements IteratorAggregate, JsonSerializable, Serializable {
 		if (!isset($form->attributes)) {
 			$form->attributes = array();
 		}
-		$form->attributes['id']     = $form->id;
-		$form->attributes['method'] = $form->method;
-		$form->attributes['action'] = $form->action;
+		$form->attributes['id']     = (isset($form->id)) ? $form->id : '';
+		$form->attributes['method'] = (isset($form->method)) ? $form->method : 'POST';
+		$form->attributes['action'] = (isset($form->action)) ? $form->action : '';
 
 		$this->attributes = $form->attributes;
 
