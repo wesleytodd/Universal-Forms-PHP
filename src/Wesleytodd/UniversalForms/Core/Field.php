@@ -40,6 +40,10 @@ class Field implements JsonSerializable, Serializable {
 		$this->unserialize(json_encode($field));
 	}
 
+	public function getRules() {
+		return $this->rules;
+	}
+
 	/**
 	 * Implementing serializeable serialize
 	 */

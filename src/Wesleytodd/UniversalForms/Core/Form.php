@@ -2,6 +2,7 @@
 
 namespace Wesleytodd\UniversalForms\Core;
 
+use stdClass;
 use IteratorAggregate;
 use ArrayIterator;
 use Serializable;
@@ -31,14 +32,16 @@ class Form implements IteratorAggregate, JsonSerializable, Serializable {
 	 * @param string|array $form an array or json string UniversalForm declaration
 	 * @param array $opts an array of other options
 	 */
-	public function __construct($form = null) {
-		if ($form == null) {
-			$form = json_encode(new stdClass());
-		} else if (!is_string($form)) {
-			$form = json_encode($form);
-		}
-		if ($form !== '{}') {
+	public function __construct($form = null, $input = null) {
+		if ($form !== null) {
+			if (!is_string($form)) {
+				$form = json_encode($form);
+			}
 			$this->unserialize($form);
+		}
+
+		if ($input !== null) {
+			$this->populate($input);
 		}
 	}
 
@@ -68,6 +71,38 @@ class Form implements IteratorAggregate, JsonSerializable, Serializable {
 	public function removeField($name) {
 		unset($this->fields[$name]);
 		return $this;
+	}
+
+	/**
+	 * Populate the values
+	 *
+	 * @param array $input
+	 */
+	public function populate($input) {
+		foreach ($this as $field) {
+			if (isset($input[$field->name])) {
+				$field->value = $input[$field->name];
+			} else {
+				$field->value = '';
+			}
+		}
+		return $this;
+	}
+
+	public function getValues() {
+		$values = array();
+		foreach ($this as $field) {
+			$values[$field->name] = $field->value;
+		}
+		return $values;
+	}
+
+	public function getRules() {
+		$rules = array();
+		foreach ($this as $field) {
+			$rules[$field->name] = $field->getRules();
+		}
+		return $rules;
 	}
 
 	/**
