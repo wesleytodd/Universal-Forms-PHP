@@ -1,6 +1,6 @@
 <?php
 
-namespace wesleytodd\UniversalForms\Core;
+namespace Wesleytodd\UniversalForms\Core;
 
 use Serializable;
 use JsonSerializable;
@@ -40,6 +40,10 @@ class Field implements JsonSerializable, Serializable {
 		$this->unserialize(json_encode($field));
 	}
 
+	public function getRules() {
+		return $this->rules;
+	}
+
 	/**
 	 * Implementing serializeable serialize
 	 */
@@ -73,8 +77,8 @@ class Field implements JsonSerializable, Serializable {
 		$this->attributes = $field->attributes;
 
 		if (!in_array($field->type, array('textarea', 'select'))) {
-			$this->attributes['type'] = $field->type;
-			$this->attributes['value'] = $field->value;
+			$this->attributes['type'] = (isset($field->type)) ? $field->type : 'text';
+			$this->attributes['value'] = (isset($field->value)) ? $field->value : '';
 		}
 
 		if (in_array($field->type, array('select', 'radio', 'checkbox'))) {

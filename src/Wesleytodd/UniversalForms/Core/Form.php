@@ -1,7 +1,8 @@
 <?php
 
-namespace wesleytodd\UniversalForms\Core;
+namespace Wesleytodd\UniversalForms\Core;
 
+use stdClass;
 use IteratorAggregate;
 use ArrayIterator;
 use Serializable;
@@ -31,11 +32,17 @@ class Form implements IteratorAggregate, JsonSerializable, Serializable {
 	 * @param string|array $form an array or json string UniversalForm declaration
 	 * @param array $opts an array of other options
 	 */
-	public function __construct($form) {
-		if (!is_string($form)) {
-			$form = json_encode($form);
+	public function __construct($form = null, $input = null) {
+		if ($form !== null) {
+			if (!is_string($form)) {
+				$form = json_encode($form);
+			}
+			$this->unserialize($form);
 		}
-		$this->unserialize($form);
+
+		if ($input !== null) {
+			$this->populate($input);
+		}
 	}
 
 	/**
@@ -67,6 +74,38 @@ class Form implements IteratorAggregate, JsonSerializable, Serializable {
 	}
 
 	/**
+	 * Populate the values
+	 *
+	 * @param array $input
+	 */
+	public function populate($input) {
+		foreach ($this as $field) {
+			if (isset($input[$field->name])) {
+				$field->value = $input[$field->name];
+			} else {
+				$field->value = '';
+			}
+		}
+		return $this;
+	}
+
+	public function getValues() {
+		$values = array();
+		foreach ($this as $field) {
+			$values[$field->name] = $field->value;
+		}
+		return $values;
+	}
+
+	public function getRules() {
+		$rules = array();
+		foreach ($this as $field) {
+			$rules[$field->name] = $field->getRules();
+		}
+		return $rules;
+	}
+
+	/**
 	 * Implementing iterator interface
 	 */
 	public function getIterator() {
@@ -92,9 +131,9 @@ class Form implements IteratorAggregate, JsonSerializable, Serializable {
 		if (!isset($form->attributes)) {
 			$form->attributes = array();
 		}
-		$form->attributes['id']     = $form->id;
-		$form->attributes['method'] = $form->method;
-		$form->attributes['action'] = $form->action;
+		$form->attributes['id']     = (isset($form->id)) ? $form->id : '';
+		$form->attributes['method'] = (isset($form->method)) ? $form->method : 'POST';
+		$form->attributes['action'] = (isset($form->action)) ? $form->action : '';
 
 		$this->attributes = $form->attributes;
 
