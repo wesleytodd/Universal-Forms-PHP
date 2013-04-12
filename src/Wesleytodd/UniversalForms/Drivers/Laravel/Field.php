@@ -1,13 +1,22 @@
-<?php
+<?php namespace Wesleytodd\UniversalForms\Drivers\Laravel;
 
-namespace Wesleytodd\UniversalForms\Drivers\Laravel;
-
+use \View;
 use Wesleytodd\UniversalForms\Core\Field as CoreField;
 
 class Field extends CoreField {
 
+	/**
+	 * An array of the field errors
+	 *
+	 * @var array
+	 */
 	public $errors = array();
 
+	/**
+	 * Get the array of rules in Laravel format
+	 *
+	 * @return array The array of rules for the field
+	 */
 	public function getRules() {
 		$rules = array();
 		$base_rules = parent::getRules();
@@ -34,6 +43,12 @@ class Field extends CoreField {
 		return $rules;
 	}
 
+	/**
+	 * Validate the field
+	 *
+	 * @param mixed $input The form input to validate
+	 * @return bool True if it is valid
+	 */
 	public function valid($input = null) {
 		if ($input !== null) {
 			$this->value = $input;
@@ -43,6 +58,12 @@ class Field extends CoreField {
 		return $this->validator->passes();
 	}
 
+	/**
+	 * Set error messages
+	 *
+	 * @param mixed $error An array of errors or a single error message
+	 * @return Field $this
+	 */
 	public function setErrors($error, $message = null) {
 		if (is_array($error)) {
 			foreach ($error as $key => $msg) {
@@ -54,12 +75,38 @@ class Field extends CoreField {
 		return $this;
 	}
 
+	/**
+	 * Does the field have errors
+	 *
+	 * @return bool True if errors exist
+	 */
 	public function hasErrors() {
 		return !empty($this->errors);
 	}
 
+	/**
+	 * Get the errors
+	 *
+	 * @return array The array of errors
+	 */
 	public function getErrors() {
 		return $this->errors;
+	}
+
+	/**
+	 * Render the field
+	 *
+	 * @param View $fieldView A Laravel view to render the field with
+	 * @return View The view to render
+	 */
+	public function render(View $fieldView = null) {
+		if ($fieldView !== null) {
+			return $fieldView->with('field', $this);
+		}
+
+		return View::make('UniversalForms::fields.' . $this->type, array(
+			'field' => $this
+		));
 	}
 
 }

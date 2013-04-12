@@ -1,6 +1,4 @@
-<?php
-
-namespace Wesleytodd\UniversalForms\Drivers\Laravel;
+<?php namespace Wesleytodd\UniversalForms\Drivers\Laravel;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -20,7 +18,7 @@ class UniversalFormsServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app['config']->package('Wesleytodd/UniversalForms', __DIR__.'/config');
+		$this->package('Wesleytodd', 'UniversalForms', __DIR__);
 	}
 
 	/**

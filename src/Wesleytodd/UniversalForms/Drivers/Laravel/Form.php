@@ -1,18 +1,25 @@
-<?php
-
-namespace Wesleytodd\UniversalForms\Drivers\Laravel;
+<?php namespace Wesleytodd\UniversalForms\Drivers\Laravel;
 
 use \Config;
 use \Validator;
+use \View;
 use Exception;
 use Wesleytodd\UniversalForms\Core\Form as CoreForm;
 
 class Form extends CoreForm {
 
+	/**
+	 * The file path to load
+	 *
+	 * @var string
+	 */
 	public $file;
 
 	/**
 	 * Constructor
+	 *
+	 * @param mixed $form The form object or path to a json file, can be a string, array or object
+	 * @param array $input Optional input to populate field values
 	 */
 	public function __construct($form = null, $input = null) {
 
@@ -53,6 +60,12 @@ class Form extends CoreForm {
 		return $this;
 	}
 
+	/**
+	 * Sets the path to the json file
+	 *
+	 * @param string $file the file name relative to the 'path' config variable
+	 * @return string The full file path
+	 */
 	public function setFilePath($file, $ext = null) {
 		if ($ext === null) {
 			 $ext = Config::get('UniversalForms::ext');
@@ -61,6 +74,13 @@ class Form extends CoreForm {
 		return $this->file;
 	}
 
+	/**
+	 * Validates the input
+	 *
+	 * @param array $input An array of form input
+	 * @param string $format The message format for Laravel use
+	 * @return bool True if the form validates
+	 */
 	public function valid($input = array(), $format = ':message') {
 		if (!empty($input)) {
 			$this->populate($input);
@@ -81,6 +101,11 @@ class Form extends CoreForm {
 		return $valid;
 	}
 
+	/**
+	 * Gets the error messages
+	 *
+	 * @return array An array of errors with the field name as the key
+	 */
 	public function getErrors() {
 		$errors = array();
 		foreach ($this as $field) {
@@ -89,6 +114,22 @@ class Form extends CoreForm {
 			}
 		}
 		return $errors;
+	}
+
+	/**
+	 * Render the form
+	 *
+	 * @param View $formView A Laravel view to render the form with
+	 * @return View The view to render
+	 */
+	public function render(View $formView = null) {
+		if ($formView !== null) {
+			return $formView->with('form', $this);
+		}
+
+		return View::make('UniversalForms::form', array(
+			'form' => $this
+		));
 	}
 
 }

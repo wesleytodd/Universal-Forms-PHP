@@ -68,6 +68,7 @@ class Field implements JsonSerializable, Serializable {
 		if (!isset($field->attributes)) {
 			$field->attributes = array();
 		}
+		$field->attributes = (array) $field->attributes;
 		$field->attributes['name'] = $field->name;
 
 		$this->name       = $field->name;
@@ -82,7 +83,7 @@ class Field implements JsonSerializable, Serializable {
 		}
 
 		if (in_array($field->type, array('select', 'radio', 'checkbox'))) {
-			$this->options = $field->options;
+			$this->options = (array) $field->options;
 		}
 	}
 
